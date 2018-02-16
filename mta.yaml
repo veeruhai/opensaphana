@@ -14,6 +14,23 @@ modules:
       - name: hdi_core_db
         properties:
           TARGET_CONTAINER: '~{hdi-container-name}'
+      - name: user_container
+        properties:
+          key: hdi-user-service
+          service: '~{user-container-name}'
+        group: SERVICE_REPLACEMENTS
+      - name: cross_schema_servcie
+        properties:
+          key: hdi-sflight-service
+          service: '~{sflight-service-name}'
+        group: SERVICE_REPLACEMENTS
+  - name: user_db
+    type: hdb
+    path: user_db
+    requires:
+      - name: user_container
+        properties:
+          TARGET_CONTAINER: '~{user-container-name}'
 resources:
   - name: saphana06_00-uaa
     type: com.sap.xs.uaa-space
@@ -26,3 +43,13 @@ resources:
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
+  - name: user_container
+    type: com.sap.xs.hdi-container
+    properties:
+      user-container-name: '${service-name}'
+  - name: cross_schema_servcie
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: CROSS_SCHEMA_SFLIGHT_02
+    properties:
+      sflight-service-name: '${service-name}'
