@@ -7,6 +7,21 @@ modules:
     path: web
     requires:
       - name: saphana06_00-uaa
+      - name: core_js_api
+        properties:
+          name: core-xsjs-backend
+          url: '~{url}'
+          forwardAuthToken: true
+        group: destinations
+      - name: user_js_api
+        group: destinations
+        properties:
+          name: user-backend
+          url: '~{url}'
+          forwardAuthToken: true
+      - name: ui5-lib
+        properties:
+          ui5liburl: '~{url}'
   - name: core_db
     type: hdb
     path: core_db
@@ -31,6 +46,28 @@ modules:
       - name: user_container
         properties:
           TARGET_CONTAINER: '~{user-container-name}'
+  - name: core_js
+    type: nodejs
+    path: core_js
+    provides:
+      - name: core_js_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: saphana06_00-uaa
+      - name: core_db
+      - name: hdi_core_db
+  - name: user_js
+    type: nodejs
+    path: user_js
+    provides:
+      - name: user_js_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: saphana06_00-uaa
+      - name: user_container
+      - name: user_db
 resources:
   - name: saphana06_00-uaa
     type: com.sap.xs.uaa-space
@@ -53,3 +90,8 @@ resources:
       service-name: CROSS_SCHEMA_SFLIGHT_02
     properties:
       sflight-service-name: '${service-name}'
+  - name: ui5-lib
+    type: configuration
+    parameters:
+      provider-id: 'com.sap.ui5.dist.sapui5-dist-xsa.XSAC_UI5_FESV3:sapui5_fesv3'
+      version: '>=1.44.0'
